@@ -44,10 +44,12 @@ const SignUp = () => {
         body: JSON.stringify({ email, fullName, password }),
       });
       if (response.status === 201) {
-        toast.success("Registration successful. Please sign in.", {
+        toast.success("Registration successful. Redirecting in 2 seconds...", {
           duration: 1000, // Adjust the duration here
         });
-        router.push("/auth/sign-in");
+         setTimeout(() => {
+      router.push("/auth/sign-in");
+    }, 2000)
       } else {
         const data = await response.json();
         toast.error(data.message || "An error occurred during registration.", {
@@ -72,7 +74,7 @@ const SignUp = () => {
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-zinc-950">
+    <section className="bg-gray-50 dark:bg-zinc-950 min-h-screen flex items-center justify-center">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 ">
         <a
@@ -88,7 +90,7 @@ const SignUp = () => {
           />
           WorkFlo
         </a>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-zinc-900 dark:border-gray-700">
+        <div className="w-full min-w-[380px] md:min-w-[400px] lg:min-w-[500px] bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-zinc-900 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Create an account
