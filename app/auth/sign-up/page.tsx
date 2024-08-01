@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast"
+import toast, { Toaster } from "react-hot-toast";
+import { FaSpinner } from "react-icons/fa";
 import Image from "next/image";
 
 const SignUp = () => {
@@ -11,45 +11,70 @@ const SignUp = () => {
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-       if (password !== confirmPassword) {
-         toast({
-           variant: "destructive",
-           title: "Passwords do not match",
-           description: "Please make sure your passwords match.",
-        
-         });
-         return;
-       }
+    if (password !== confirmPassword) {
+      toast.error(
+        "Passwords do not match. Please make sure your passwords match.", {
+          duration: 1000, // Adjust the duration here
+          id: "password-mismatch",
+          style: {
+            minWidth: "300px",
+            maxWidth: "300px",
+            fontSize: "13px",
+          }
+      });
+       
+     
+      return;
+    }
 
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, fullName, password }),
-    });
+    setLoading(true);
 
-    if (response.ok) {
-      router.push("/auth/sign-in");
-     toast({
-       title: "success",
-       description:"Account created successfully",
-     }); // Show success message
-    } else {
-      const data = await response.json();
-      alert(data.message || "An error occurred during sign-in."); // Display error message
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, fullName, password }),
+      });
+      if (response.status === 201) {
+        toast.success("Registration successful. Please sign in.", {
+          duration: 1000, // Adjust the duration here
+        });
+        router.push("/auth/sign-in");
+      } else {
+        const data = await response.json();
+        toast.error(data.message || "An error occurred during registration.", {
+          duration: 1000, // Adjust the duration here
+        });
+      }
+    } catch (error: any) {
+      console.error(
+        "Error during registration:",
+        error.response?.data || error
+      );
+      toast.error(
+        error.response?.data?.message ||
+          "Error signing up. Please try again later.",
+        {
+          duration: 1000, // Adjust the duration here
+        }
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <section className="bg-gray-50 dark:bg-zinc-950">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 ">
         <a
           href="#"
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
@@ -169,9 +194,16 @@ const SignUp = () => {
               </div>
               <button
                 type="submit"
-                className="w-full text-white  bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-800 dark:hover:bg-blue-900 dark:focus:ring-primary-800"
+                className={`w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-800 dark:hover:bg-blue-900 dark:focus:ring-primary-800 ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={loading}
               >
-                Create an account
+                {loading ? (
+                  <FaSpinner className="animate-spin inline-block" />
+                ) : (
+                  "Create an account"
+                )}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
