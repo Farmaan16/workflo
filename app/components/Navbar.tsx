@@ -1,22 +1,44 @@
-import Link from "next/link";
+"use client";
 
-const Navbar = () => {
+import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+const Navbar: React.FC = () => {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false }); // Sign out without redirect
+    router.push("/"); // Redirect to home page
+  };
+
   return (
-    <nav className="bg-gray-800 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/">
-          <p className="text-white text-2xl font-bold">Task Manager</p>
-        </Link>
-        <div className="space-x-4">
-          <Link href="/auth/sign-in">
-            <p className="px-4 py-2 bg-blue-500 text-white rounded-md">Login</p>
-          </Link>
-          <Link href="/auth/sign-up">
-            <p className="px-4 py-2 bg-green-500 text-white rounded-md">
-              Sign Up
-            </p>
-          </Link>
-        </div>
+    <nav className="flex justify-between p-4 bg-zinc-600 text-white">
+      <Link href="/">
+        <span className="text-lg font-bold">WorkFLo</span>
+      </Link>
+      <div>
+        {session ? (
+          <>
+            <span className="mr-4 just">Welcome, {session.user?.fullName}</span>
+            <button
+              onClick={handleSignOut}
+              className="bg-black hover:bg-zinc-500 px-4 py-2 rounded-2xl"
+            >
+              Sign Out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/auth/sign-in">
+              <span className="mr-4">Sign In</span>
+            </Link>
+            <Link href="/auth/sign-up">
+              <span>Sign Up</span>
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );

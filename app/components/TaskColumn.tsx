@@ -1,10 +1,18 @@
-'use client';
-
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTask } from "../store/tasksSlice";
-import TaskCard from "./TaskCard";
-import { Draggable } from "react-beautiful-dnd";
+import DraggableTask from "./DraggableTask";
+import {
+  DndContext,
+  closestCenter,
+  useSensor,
+  PointerSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 interface TaskColumnProps {
   column: string;
@@ -14,6 +22,10 @@ interface TaskColumnProps {
 const TaskColumn: React.FC<TaskColumnProps> = ({ column, tasks }) => {
   const dispatch = useDispatch();
   const [newTaskTitle, setNewTaskTitle] = useState("");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
 
   const handleAddTask = () => {
     if (newTaskTitle.trim()) {
@@ -32,21 +44,18 @@ const TaskColumn: React.FC<TaskColumnProps> = ({ column, tasks }) => {
   return (
     <div>
       <h2 className="text-lg font-bold mb-2">{column}</h2>
-      <div className="space-y-2">
-        {tasks.map((task, index) => (
-          <Draggable key={task.id} draggableId={task.id} index={index}>
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-              >
-                <TaskCard task={task} />
-              </div>
-            )}
-          </Draggable>
-        ))}
-      </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter}>
+        <SortableContext
+          items={tasks.map((task) => task.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-2">
+            {tasks.map((task) => (
+              <DraggableTask key={task.id} id={task.id} task={task} />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
       <div className="mt-2">
         <input
           type="text"

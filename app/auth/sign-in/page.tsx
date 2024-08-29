@@ -5,7 +5,19 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
-import Image from "next/image";
+import AppIcon from "@/app/components/shared/AppIcon";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/app/components/ui/card";
+import { Label } from "@/app/components/ui/label";
+import { Input } from "@/app/components/ui/input";
+import Link from "next/link";
+import { Button } from "@/app/components/ui/button";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -19,6 +31,7 @@ const SignIn = () => {
 
     const result = await signIn("credentials", {
       redirect: false,
+      callbackUrl: "/dashboard",
       email,
       password,
     });
@@ -46,91 +59,70 @@ const SignIn = () => {
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-zinc-950 min-h-screen flex items-center justify-center  ">
+    
+
+    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="flex flex-col items-center justify-center px-6 py-10 mx-auto md:h-screen lg:py-0 ">
-        <a
-          href="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <Image
-            className="w-8 h-8 mr-2"
-            width={32}
-            height={32}
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-            alt="logo"
-          />
-          WorkFlo
-        </a>
-        <div className="w-full min-w-[380px] md:min-w-[400px] lg:min-w-[500px] mx-auto bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-zinc-900 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
-            </h1>
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-50 dark:border-gray-600 dark:placeholder-gray-40 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@gmail.com"
-                  required
-                />
+
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold"  onClick={() => router.push("/")}>Login</CardTitle>
+          <CardDescription className="font-semibold">
+            Enter your email and password to access your account.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Joe@example.com"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
               </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className={`w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-800 dark:hover:bg-blue-900 dark:focus:ring-primary-800 ${
-                  loading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <FaSpinner className="animate-spin inline-block" />
-                ) : (
-                  "Sign In"
-                )}
-              </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don&apos;t have an account?{" "}
-                <a
-                  className="font-medium text-primary-600 hover:text-blue-700 hover:underline dark:text-primary-500 dark:hover:text-white"
-                  href="/auth/sign-up"
-                >
-                  Create one here
-                </a>
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
+              <Input
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                required
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={loading}
+              className={`w-full  ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? (
+                <FaSpinner className="animate-spin inline-block" />
+              ) : (
+                "Sign In"
+              )}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="text-center text-neutral-400 text-sm">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/auth/sign-up"
+            className="font-medium ml-2 hover:text-zinc-300 hover:underline"
+            prefetch={false}
+          >
+            Sign up
+          </Link>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 

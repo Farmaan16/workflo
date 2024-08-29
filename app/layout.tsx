@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Provider } from "react-redux";
-import { store } from "./store/index";
+import { Manrope } from "next/font/google";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const fontHeading = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-heading",
+});
+
+const fontBody = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-body",
+});
+
 
 export const metadata: Metadata = {
   title: "Workflo",
@@ -20,7 +32,9 @@ export default function RootLayout({
     <html lang="en">
       {/* <Provider store={store}> */}
 
-      <body className={inter.className}>
+      <body
+        className={cn("antialiased", fontHeading.variable, fontBody.variable)}
+      >
         {/* <Navbar /> */}
         {children}
       </body>
