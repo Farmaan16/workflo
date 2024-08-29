@@ -5,7 +5,6 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
-import AppIcon from "@/app/components/shared/AppIcon";
 import {
   Card,
   CardHeader,
@@ -59,14 +58,17 @@ const SignIn = () => {
   };
 
   return (
-    
-
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md p-6 sm:p-8">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold"  onClick={() => router.push("/")}>Login</CardTitle>
+          <CardTitle
+            className="text-2xl font-bold"
+            onClick={() => router.push("/")}
+          >
+            Login
+          </CardTitle>
           <CardDescription className="font-semibold">
             Enter your email and password to access your account.
           </CardDescription>
@@ -106,12 +108,12 @@ const SignIn = () => {
               {loading ? (
                 <FaSpinner className="animate-spin inline-block" />
               ) : (
-                "Sign In"
+                "Login"
               )}
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="text-center text-neutral-400 text-sm">
+        <CardFooter className=" text-center text-neutral-400 text-sm">
           Don&apos;t have an account?{" "}
           <Link
             href="/auth/sign-up"

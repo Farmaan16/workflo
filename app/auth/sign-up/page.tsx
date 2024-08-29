@@ -4,7 +4,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
-import Image from "next/image";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/app/components/ui/card";
+import { Label } from "@/app/components/ui/label";
+import { Input } from "@/app/components/ui/input";
+import { Checkbox } from "@/app/components/ui/checkbox";
+import Link from "next/link";
+import { Button } from "@/app/components/ui/button";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -19,17 +31,18 @@ const SignUp = () => {
 
     if (password !== confirmPassword) {
       toast.error(
-        "Passwords do not match. Please make sure your passwords match.", {
-          duration: 1000, // Adjust the duration here
+        "Passwords do not match. Please make sure your passwords match.",
+        {
+          duration: 1500, // Adjust the duration here
           id: "password-mismatch",
           style: {
             minWidth: "300px",
             maxWidth: "300px",
             fontSize: "13px",
-          }
-      });
-       
-     
+          },
+        }
+      );
+
       return;
     }
 
@@ -44,12 +57,12 @@ const SignUp = () => {
         body: JSON.stringify({ email, fullName, password }),
       });
       if (response.status === 201) {
-        toast.success("Registration successful. Redirecting in 2 seconds...", {
+        toast.success("Registration successful. Redirecting in 2 seconds..", {
           duration: 1000, // Adjust the duration here
         });
-         setTimeout(() => {
-      router.push("/auth/sign-in");
-    }, 2000)
+        setTimeout(() => {
+          router.push("/auth/sign-in");
+        }, 2000);
       } else {
         const data = await response.json();
         toast.error(data.message || "An error occurred during registration.", {
@@ -74,153 +87,107 @@ const SignUp = () => {
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-zinc-950 min-h-screen flex items-center justify-center">
+    <div className="flex items-center justify-center h-screen px-4 py-12 sm:px-6 lg:px-8">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 ">
-        <a
-          href="/"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <Image
-            className="w-8 h-8 mr-2"
-            width={32}
-            height={32}
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-            alt="logo"
-          />
-          WorkFlo
-        </a>
-        <div className="w-full min-w-[380px] md:min-w-[400px] lg:min-w-[500px] bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-zinc-900 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Create an account
-            </h1>
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-50 dark:border-gray-600 dark:placeholder-gray-40 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@gmail.com"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Full Name
-                </label>
-                <input
+      <Card className="w-full max-w-md p-6 sm:p-8">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold" onClick={() => router.push("/")}>
+            Create an Account
+          </CardTitle>
+          <CardDescription>
+            Sign up to get started with our platform.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
                   type="text"
                   name="fullName"
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="John Doe"
+                  placeholder="Enter your name"
                   required
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                type="password"
+                name="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Input
+                type="password"
+                name="confirm-password"
+                id="confirm-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                required
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="terms" required />
+              <Label htmlFor="terms" className="text-sm text-muted-foreground">
+                I agree to the{" "}
+                <Link href="#" className="underline" prefetch={false}>
+                  terms of service
+                </Link>
+              </Label>
+            </div>
 
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="confirm-password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Confirm password
-                </label>
-                <input
-                  type="password"
-                  name="confirm-password"
-                  id="confirm-password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="terms"
-                    aria-describedby="terms"
-                    type="checkbox"
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                    required
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="terms"
-                    className="font-light text-gray-500 dark:text-gray-300"
-                  >
-                    I accept the{" "}
-                    <a
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                      href="#"
-                    >
-                      Terms and Conditions
-                    </a>
-                  </label>
-                </div>
-              </div>
-              <button
-                type="submit"
-                className={`w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-800 dark:hover:bg-blue-900 dark:focus:ring-primary-800 ${
-                  loading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <FaSpinner className="animate-spin inline-block" />
-                ) : (
-                  "Create an account"
-                )}
-              </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Already have an account?{" "}
-                <a
-                  className="font-medium text-primary-600 hover:text-blue-700 hover:underline dark:text-primary-500 dark:hover:text-white"
-                  href="/auth/sign-in"
-                >
-                  Login here
-                </a>
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
+            <Button
+              type="submit"
+              className={`w-full  ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? (
+                <FaSpinner className="animate-spin inline-block" />
+              ) : (
+                " Sign Up"
+              )}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-start">
+          <p className="text-sm text-neutral-400">
+            Already have an account?{" "}
+            <a
+              className="font-medium hover:text-zinc-300 hover:underline"
+              href="/auth/sign-in"
+            >
+              Login here
+            </a>
+          </p>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 

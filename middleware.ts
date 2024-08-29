@@ -8,14 +8,14 @@ export async function middleware(request: NextRequest) {
 
   // Redirect to dashboard if the user is already authenticated
   // and trying to access sign-in, sign-up, or home page
-  if (
-    token &&
-    (url.pathname.startsWith("/auth/sign-in") ||
-      url.pathname.startsWith("/auth/sign-in") ||
-      url.pathname === "/")
-  ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+  // if (
+  //   token &&
+  //   (url.pathname.startsWith("/auth/sign-in") ||
+  //     url.pathname.startsWith("/auth/sign-up") ||
+  //     url.pathname === "/")
+  // ) {
+  //   return NextResponse.redirect(new URL("/dashboard", request.url));
+  // }
 
   if (!token && url.pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
