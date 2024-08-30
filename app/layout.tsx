@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { Manrope } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const fontHeading = Manrope({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
       >
         {/* <Navbar /> */}
         {children}
+        <Toaster />
       </body>
       {/* </Provider> */}
     </html>

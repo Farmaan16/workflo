@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { FaSpinner } from "react-icons/fa";
 import {
   Card,
@@ -17,6 +17,7 @@ import { Input } from "@/app/components/ui/input";
 import { Checkbox } from "@/app/components/ui/checkbox";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -26,23 +27,36 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const { toast } = useToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error(
-        "Passwords do not match. Please make sure your passwords match.",
-        {
-          duration: 1500, // Adjust the duration here
-          id: "password-mismatch",
-          style: {
-            minWidth: "300px",
-            maxWidth: "300px",
-            fontSize: "13px",
-          },
-        }
-      );
+      // toast.error(
+      //   "Passwords do not match. Please make sure your passwords match.",
+      //   {
+      //     duration: 1500, // Adjust the duration here
+      //     id: "password-mismatch",
+      //     style: {
+      //       minWidth: "300px",
+      //       maxWidth: "300px",
+      //       fontSize: "13px",
 
+      //     },
+      //   }
+      // );
+
+      toast({
+        title: "Uh oh! Something went wrong.",
+        variant: "destructive",
+        description:
+          " Passwords do not match. Please make sure your passwords match.",
+        duration: 2000, // Adjust the duration here
+        // className: cn(
+        //   "top-8 right-10 max-w-[340px] h-[70px] flex fixed md:max-w-[300px] md:top-8 md:right-80 bg-green-500 text-white border border-green-500 text-[1px] rounded-md",
+        // ),
+      });
       return;
     }
 
@@ -57,16 +71,22 @@ const SignUp = () => {
         body: JSON.stringify({ email, fullName, password }),
       });
       if (response.status === 201) {
-        toast.success("Registration successful. Redirecting in 2 seconds..", {
+        toast({
+          title: "Registration successful. Redirecting in 2 seconds...",
+          variant: "success",
           duration: 1000, // Adjust the duration here
         });
+
         setTimeout(() => {
           router.push("/auth/sign-in");
         }, 2000);
       } else {
         const data = await response.json();
-        toast.error(data.message || "An error occurred during registration.", {
-          duration: 1000, // Adjust the duration here
+        toast({
+          title: data.message || "An error occurred during registration.",
+          variant: "destructive",
+
+          duration: 1500, // Adjust the duration here
         });
       }
     } catch (error: any) {
@@ -74,13 +94,13 @@ const SignUp = () => {
         "Error during registration:",
         error.response?.data || error
       );
-      toast.error(
-        error.response?.data?.message ||
+      toast({
+        title:
+          error.response?.data?.message ||
           "Error signing up. Please try again later.",
-        {
-          duration: 1000, // Adjust the duration here
-        }
-      );
+        variant: "destructive",
+        duration: 1500, // Adjust the duration here
+      });
     } finally {
       setLoading(false);
     }
@@ -88,10 +108,12 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center justify-center h-screen px-4 py-12 sm:px-6 lg:px-8">
-      <Toaster position="top-center" reverseOrder={false} />
       <Card className="w-full max-w-md p-6 sm:p-8">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold" onClick={() => router.push("/")}>
+          <CardTitle
+            className="text-2xl font-bold"
+            onClick={() => router.push("/")}
+          >
             Create an Account
           </CardTitle>
           <CardDescription>

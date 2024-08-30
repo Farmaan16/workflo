@@ -23,7 +23,7 @@ export const options: NextAuthOptions = {
 
           if (!user) {
             console.error("No user found with the email:", credentials?.email);
-            throw new Error("Oops! No user found with the email");
+            throw new Error("Oops! No user found with this email");
           }
 
           // Compare provided password with stored hash
