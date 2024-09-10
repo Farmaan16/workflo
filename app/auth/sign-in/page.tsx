@@ -12,11 +12,11 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/app/components/ui/card";
-import { Label } from "@/app/components/ui/label";
-import { Input } from "@/app/components/ui/input";
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -32,7 +32,7 @@ const SignIn = () => {
 
     const result = await signIn("credentials", {
       redirect: false,
-      callbackUrl: "/dashboard",
+      callbackUrl: "/board",
       email,
       password,
     });
@@ -47,7 +47,7 @@ const SignIn = () => {
        });
        
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/board");
       }, 1000);
     } else {
       let errorMessage = result?.error;
@@ -71,7 +71,6 @@ const SignIn = () => {
 
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
-
       <Card className="w-full max-w-md p-6 sm:p-8">
         <CardHeader className="space-y-1">
           <CardTitle
@@ -93,7 +92,7 @@ const SignIn = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Joe@example.com"
+                placeholder="name@gmail.com"
                 required
               />
             </div>
@@ -106,6 +105,7 @@ const SignIn = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
+                placeholder="•••••••••"
                 required
               />
             </div>
@@ -131,7 +131,7 @@ const SignIn = () => {
             className="font-medium ml-2 hover:text-zinc-300 hover:underline"
             prefetch={false}
           >
-            Sign up
+            Create one here
           </Link>
         </CardFooter>
       </Card>

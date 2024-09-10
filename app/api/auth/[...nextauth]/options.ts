@@ -60,12 +60,14 @@ export const options: NextAuthOptions = {
       if (user) {
         token.id = (user as any).id;
         token.fullName = user.fullName;
+        token.email = user.email;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.fullName = token.fullName;
+      session.user.email = token.email;
       return session;
     },
   },

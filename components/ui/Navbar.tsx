@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="flex justify-between p-4 bg-zinc-600 text-white">
+    <nav className="flex justify-between p-4  text-white">
       <Link href="/">
         <span className="text-lg font-bold">WorkFLo</span>
       </Link>
@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
             <span className="mr-4 just">Welcome, {session.user?.fullName}</span>
             <button
               onClick={handleSignOut}
-              className="bg-black hover:bg-zinc-500 px-4 py-2 rounded-2xl"
+              className="bg-zinc-700 hover:bg-zinc-500 px-2 py-1 rounded-2xl"
             >
               Sign Out
             </button>

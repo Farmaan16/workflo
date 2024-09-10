@@ -1,67 +1,82 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectToDatabase from "../../lib/mongodb";
-import Task from "../../models/Task";
+import { NextResponse } from "next/server";
+import connectToDatabase from "@/app/lib/mongodb";
+import Task from "@/app/models/Task";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/options";
 
-export async function GET(req: NextRequest) {
+/// Get all tasks for the logged-in user
+export async function GET(req: Request) {
   await connectToDatabase();
-  const userId = req.nextUrl.searchParams.get("userId");
-  if (!userId) {
-    return NextResponse.json(
-      { message: "User ID is required" },
-      { status: 400 }
-    );
+  const session = await getServerSession(options);
+
+  console.log("Session:", session); // Log session to ensure it contains the user
+   if (!session || !session.user?.id) {
+     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const tasks = await Task.find({ userId });
-  return NextResponse.json(tasks);
+
+   try {
+     const tasks = await Task.find({ userId: session.user.id });
+     return NextResponse.json(tasks);
+   } catch (error : any) {
+     return NextResponse.json({ message: error.message }, { status: 500 });
+   }
 }
 
-export async function POST(req: NextRequest) {
+// Create a new task
+export async function POST(req: Request) {
   await connectToDatabase();
-  const { title, description, status, userId } = await req.json();
+  const session = await getServerSession(options);
+  console.log("Session:", session); // Log session to ensure it contains the user
 
-  if (!title || !status || !userId) {
+  if (!session || !session.user?.id) {
+    console.error("Unauthorized: Missing user in session.");
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const { title, description, priority, status } = await req.json();
+  
+  
+  // Validate request body
+  if (!title || !priority || !status) {
     return NextResponse.json(
-      { message: "Title, status, and user ID are required" },
+      { message: "Title, priority, and status are required." },
       { status: 400 }
     );
   }
 
-  const task = new Task({ title, description, status, userId });
-  await task.save();
-  return NextResponse.json(task, { status: 201 });
+
+  try {
+    // Create a new task and attach userId from session
+    const newTask = new Task({
+      title,
+      description,
+      priority,
+      status,
+      userId: session.user.id, // Attach user ID from session
+    });
+
+    // Save the task to the database
+    await newTask.save();
+
+    return NextResponse.json(newTask, { status: 201 });
+  } catch (error: any) {
+    console.error("Error creating task:", error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
 }
 
-export async function PUT(req: NextRequest) {
-  await connectToDatabase();
-  const { id, title, description, status } = await req.json();
 
-  if (!id || !status) {
-    return NextResponse.json(
-      { message: "Task ID and status are required" },
-      { status: 400 }
-    );
+
+// Delete a task
+export async function DELETE(req: Request) {
+  await connectToDatabase();
+  const session = await getServerSession(options);
+  if (!session?.user?.id) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const task = await Task.findByIdAndUpdate(
-    id,
-    { title, description, status },
-    { new: true }
-  );
-  return NextResponse.json(task);
-}
-
-export async function DELETE(req: NextRequest) {
-  await connectToDatabase();
-  const { id } = await req.json();
-
-  if (!id) {
-    return NextResponse.json(
-      { message: "Task ID is required" },
-      { status: 400 }
-    );
-  }
-
-  await Task.findByIdAndDelete(id);
+  const { taskId } = await req.json();
+  await Task.findOneAndDelete({ _id: taskId, userId: session.user.id });
   return NextResponse.json({ message: "Task deleted" });
 }

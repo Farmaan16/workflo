@@ -1,33 +1,42 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
-
+import mongoose, { Schema, Document, model, models } from "mongoose";
 export interface ITask extends Document {
+  userId: mongoose.Schema.Types.ObjectId;
   title: string;
   description?: string;
-  status: string;
-  userId: string;
+  status: "To-Do" | "In Progress" | "Under Review" | "Completed";
+  priority: "Low" | "Medium" | "Urgent";
 }
 
-const taskSchema: Schema<ITask> = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+const TaskSchema: Schema = new Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["To-Do", "In Progress", "Under Review", "Completed"],
+      default: "To-Do",
+      required: true,
+    },
+    priority: {
+      type: String,
+      enum: ["Low", "Medium", "Urgent"],
+      required: true,
+    },
   },
-  description: {
-    type: String,
-    required: false,
-  },
-  status: {
-    type: String,
-    enum: ["To-Do", "In Progress", "Under Review", "Completed"],
-    required: true,
-  },
-  userId: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
-const Task: Model<ITask> =
-  mongoose.models.Task || mongoose.model<ITask>("Task", taskSchema);
-
+const Task = models.Task || model<ITask>("Task", TaskSchema);
 export default Task;

@@ -1,71 +1,119 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "@/app/lib/api";
 
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  status: string;
+export interface TaskState {
+  tasks: any[];
+  status: "idle" | "loading" | "failed";
 }
 
-interface TasksState {
-  tasks: Task[];
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null;
-}
-
-const initialState: TasksState = {
+const initialState: TaskState = {
   tasks: [],
   status: "idle",
-  error: null,
 };
 
+// Fetch tasks from the server
 export const fetchTasks = createAsyncThunk(
   "tasks/fetchTasks",
-  async (userId: string) => {
-    const response = await fetch(`/api/tasks?userId=${userId}`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch tasks");
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/tasks");
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message); // Handle errors gracefully
     }
-    return (await response.json()) as Task[];
   }
 );
 
-const tasksSlice = createSlice({
+// Create a new task
+export const createTask = createAsyncThunk(
+  "tasks/createTask",
+  async (taskData: {
+    title: string;
+    description?: string;
+    priority: string;
+    status: string;
+  }) => {
+    const response = await api.post("/tasks", taskData); // No userId needed here
+    return response.data;
+  }
+);
+// Update an existing task
+export const updateTask = createAsyncThunk(
+  "tasks/updateTask",
+  async (taskData: {
+    _id: string;
+    title: string;
+    description?: string;
+    priority: string;
+    status: string;
+  }) => {
+    try {
+      const response = await api.patch(`/tasks/${taskData._id}`, {
+        title: taskData.title,
+        description: taskData.description,
+        priority: taskData.priority,
+        status: taskData.status,
+      });
+      return response.data;
+    } catch (error: any) {
+      // Improved error handling
+      const message = error.response?.data?.message || "Failed to update task";
+      console.error(message); // Log the error for debugging
+      throw new Error(message);
+    }
+  }
+);
+
+// Delete a task
+export const deleteTask = createAsyncThunk(
+  "tasks/deleteTask",
+  async (taskId: string) => {
+    await api.delete(`/tasks`, { data: { taskId } });
+    return taskId;
+  }
+);
+
+export const taskSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {
-    addTask: (state, action) => {
-      state.tasks.push(action.payload);
-    },
-    updateTask: (state, action) => {
-      const { id, title, description, status } = action.payload;
-      const existingTask = state.tasks.find((task) => task.id === id);
-      if (existingTask) {
-        existingTask.title = title;
-        existingTask.description = description;
-        existingTask.status = status;
-      }
-    },
-    deleteTask: (state, action) => {
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.tasks = action.payload;
+        state.status = "idle";
+      })
       .addCase(fetchTasks.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchTasks.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.tasks = action.payload;
-      })
       .addCase(fetchTasks.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message || "Failed to fetch tasks";
+        console.error("Fetch tasks failed:", action.payload);
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.tasks.push(action.payload);
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        console.error("Create task failed:", action.payload);
+      })
+
+      .addCase(updateTask.fulfilled, (state, action) => {
+        const index = state.tasks.findIndex(
+          (task) => task._id === action.payload._id
+        );
+        state.tasks[index] = action.payload;
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        console.error("Update task failed:", action.payload);
+      })
+
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter((task) => task._id !== action.payload);
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        console.error("Delete task failed:", action.payload);
       });
   },
 });
 
-export const { addTask, updateTask, deleteTask } = tasksSlice.actions;
-
-export default tasksSlice.reducer;
+export default taskSlice.reducer;

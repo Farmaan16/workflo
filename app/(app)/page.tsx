@@ -5,7 +5,8 @@
  */
 import Image from "next/image";
 import Link from "next/link";
-import AppIcon from "../components/shared/AppIcon";
+import AppIcon from "../../components/shared/AppIcon";
+import PackageIcon from "@/components/icons/PackageIcon";
 
 export default function Component() {
   return (
@@ -13,7 +14,7 @@ export default function Component() {
       <header className="bg-background px-4 py-3 shadow sm:px-6 lg:px-8">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="#" className="flex items-center gap-2" prefetch={false}>
-            <AppIcon className="h-6 w-6 text-primary" />
+            <PackageIcon className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">WorkFlo</span>
           </Link>
           <div className="flex items-center gap-4">
@@ -94,4 +95,3 @@ export default function Component() {
     </div>
   );
 }
-

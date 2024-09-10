@@ -16,3 +16,7 @@ export interface Credentials {
   email?: string;
   password: string;
 }
+
+// app/types/index.ts
+
+export * from './apiErrors';
