@@ -22,6 +22,9 @@ const fontBody = Manrope({
 export const metadata: Metadata = {
   title: "Workflo",
   description: " A workflow management tool",
+  icons: {
+    icon: "/WorkFlo.png",
+  }
 };
 
 export default function RootLayout({
@@ -32,6 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       {/* <Provider store={store}> */}
+      <head>
+        <link rel="icon" href="/WorkFlo.png" />
+      </head>
 
       <body
         className={cn("antialiased", fontHeading.variable, fontBody.variable)}
