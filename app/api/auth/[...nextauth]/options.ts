@@ -51,6 +51,7 @@ export const options: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
     signIn: "/sign-in",
@@ -72,5 +73,16 @@ export const options: NextAuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true, // Prevents JavaScript access to the cookie
+        sameSite: "lax", // Helps protect against CSRF attacks
+        path: "/",
+        secure: process.env.NODE_ENV === "production", // Ensure secure cookies in production
+      },
+    },
+  },
 };
 
