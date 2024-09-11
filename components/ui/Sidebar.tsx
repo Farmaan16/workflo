@@ -14,28 +14,21 @@ import LogOutIcon from "../icons/LogOutIcon";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 
-
-
-
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
 }
 
 function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
-    
-    const pathname = usePathname();
+  const pathname = usePathname();
 
+  const { data: session } = useSession();
+  const router = useRouter();
 
-     const { data: session } = useSession();
-    const router = useRouter();
-    
-
-     const handleSignOut = async () => {
-       await signOut({ redirect: false }); // Sign out without redirect
-       router.push("/"); // Redirect to home page
-     };
-
+  const handleSignOut = async () => {
+    await signOut({ redirect: false }); // Sign out without redirect
+    router.push("/"); // Redirect to home page
+  };
 
   return (
     <aside
@@ -59,7 +52,7 @@ function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
         </Button>
       </div>
       <div className="flex items-center gap-4 mb-6">
-        <Avatar className="w-10 h-10 border">
+        <Avatar className="w-10 h-10 border ">
           <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
           <AvatarFallback>JD</AvatarFallback>
         </Avatar>
@@ -67,7 +60,7 @@ function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           <div className="font-semibold">
             {session && session.user?.fullName}
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-xs text-zinc-400">
             {session && session.user?.email}
           </div>
         </div>

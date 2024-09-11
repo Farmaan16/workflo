@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSession } from "next-auth/react"; // Import session hook
 import { createTask, updateTask } from "@/app/store/tasksSlice";
@@ -6,6 +6,7 @@ import { AppDispatch } from "@/app/store/store";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -39,15 +40,51 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const [priority, setPriority] = useState(task?.priority || "");
   const [status, setStatus] = useState(task?.status || "");
   const [error, setError] = useState<string | null>(null);
+   const { toast } = useToast();
+
+
+   useEffect(() => {
+     if (isOpen && task) {
+       setTitle(task.title);
+       setDescription(task.description || "");
+       setPriority(task.priority);
+       setStatus(task.status);
+       setError(null);
+     } else if (isOpen) {
+       setTitle("");
+       setDescription("");
+       setPriority("");
+       setStatus("");
+       setError(null);
+     }
+   }, [isOpen, task]);
 
   const handleSave = async () => {
     if (!session?.user?.id) {
       setError("User not authenticated.");
       return;
     }
+    // Validation
+    if (!title.trim()) {
+      setError("Title is required.");
+      return;
+    }
+    if (!description.trim()) {
+      setError("Description is required.");
+      return;
+    }
+    if (!status) {
+      setError("Status is required.");
+      return;
+    }
+    if (!priority) {
+      setError("Priority is required.");
+      return;
+    }
 
     try {
       if (task) {
+        // Update existing task
         await dispatch(
           updateTask({
             ...task,
@@ -57,7 +94,14 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             status,
           })
         );
+
+        toast({
+          title: "Task updated successfully",
+          variant: "success",
+          duration: 1500, // Adjust the duration here
+        });
       } else {
+        // Create new task
         await dispatch(
           createTask({
             title,
@@ -66,6 +110,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             status,
           })
         );
+        toast({
+          title: "Task created successfully",
+          variant: "success",
+          duration: 1500, // Adjust the duration here
+        });
       }
 
       onClose();
@@ -77,13 +126,21 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   if (!isOpen) return null;
 
+  
+ const handleChange = () => {
+   // Clear error message when any input field changes
+   setError(null);
+  };
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       <div className="rounded-lg bg-background p-6 shadow-lg w-[350px] md:w-[450px]">
         <h2 className="mb-4 text-lg font-semibold">
           {task ? "Edit Task" : "Create Task"}
         </h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm mb-4 font-semibold">{error}</p>
+        )}
         <div className="grid gap-4 ">
           <div>
             <Label htmlFor="title">Title</Label>
@@ -93,7 +150,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               // className="w-full p-2 mb-4 border rounded text-zinc-600 bg-background"
               placeholder="Task Title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                handleChange();
+              }}
               required
             />
           </div>
@@ -103,7 +163,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               // className="w-full p-2 mb-4 border rounded text-zinc-600 bg-background"
               placeholder="Task Description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                handleChange();
+              }}
             />
           </div>
           <div>
@@ -111,7 +174,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             <Select
               required
               value={status}
-              onValueChange={(value: string) => setStatus(value)}
+              onValueChange={(value: string) => {
+                setStatus(value);
+                handleChange();
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />
@@ -128,7 +194,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             <Label htmlFor="priority">Priority</Label>
             <Select
               value={priority}
-              onValueChange={(value: string) => setPriority(value)}
+              onValueChange={(value: string) => {
+                setPriority(value);
+                handleChange();
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select priority" />

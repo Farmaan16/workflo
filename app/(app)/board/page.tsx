@@ -6,7 +6,6 @@ import { fetchTasks, updateTask, deleteTask } from "@/app/store/tasksSlice";
 import { Column } from "./components/Column";
 import { TaskModal } from "./components/TaskModal";
 import { RootState, AppDispatch } from "@/app/store/store"; // Import RootState and AppDispatch
-import Navbar from "@/components/ui/Navbar";
 import Sidebar from "@/components/ui/Sidebar";
 import MenuIcon from "@/components/icons/MenuIcon";
 import { Button } from "@/components/ui/button";
@@ -105,6 +104,7 @@ const TaskBoard = () => {
                 onDropTask={handleDropTask}
                 // openModal={openModal}
                 onDeleteTask={handleDeleteTask}
+                openModal={openModal}
               />
             )
           )}

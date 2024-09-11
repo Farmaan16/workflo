@@ -86,3 +86,7 @@ select:-webkit-autofill:focus {
   
   color: white;
 }
+
+.dragging {
+  cursor: grabbing
+}
