@@ -54,22 +54,20 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       } `} // Added relative class for positioning
     >
       <div className="mb-4 rounded-md border bg-muted p-4">
-        <div className="flex items-start justify-between">
-          <h3 className="break-words max-w-[150px] sm:max-w-[200px] lg:max-w-none text-base font-semibold">
+        <div className="flex items-center justify-between">
+          <h3 className="break-words max-w-[200px] sm:max-w-[200px] lg:max-w-none text-base font-semibold">
             {task.title}
           </h3>
-          <div className="flex items-center gap-2 flex-shrink-0 ">
-            <div className="whitespace-nowrap">
-              <Button size="icon" variant="ghost" onClick={onEdit}>
-                <FilePenIcon className="h-5 w-5" />
-              </Button>
-              <Button size="icon" variant="ghost" onClick={handleDeleteClick}>
-                <TrashIcon className="h-5 w-5" />
-              </Button>
-            </div>
+          <div className="flex items-center gap-2 ">
+            <Button size="icon" variant="ghost" onClick={onEdit}>
+              <FilePenIcon className="h-5 w-5" />
+            </Button>
+            <Button size="icon" variant="ghost" onClick={handleDeleteClick}>
+              <TrashIcon className="h-5 w-5" />
+            </Button>
           </div>
         </div>
-        <p className="mt-2 text-sm text-muted-foreground break-words max-w-[150px] sm:max-w-[200px] lg:max-w-none">
+        <p className="mt-2 text-sm text-zinc-400 break-words max-w-[300px] sm:max-w-[200px] lg:max-w-none">
           {task.description}
         </p>
         <div className="mt-2 flex items-center justify-between flex-wrap gap-2">
