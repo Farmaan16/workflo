@@ -80,9 +80,9 @@ function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           Dashboard
         </Link>
         <Link
-          href="/#"
+          href="/Underconstruction"
           className={
-            pathname === "/calendar"
+            pathname === "/Underconstruction"
               ? "flex items-center gap-2 rounded-md px-3 py-2 text-muted-foreground transition-colors bg-muted "
               : " flex items-center gap-2 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground font-semibold "
           }
@@ -91,16 +91,16 @@ function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           <CalendarIcon className="h-5 w-5" />
           Calendar
         </Link>
-        <Link
-          href="#"
+        {/* <Link
+          href="/Underconstruction"
           className="flex items-center gap-2 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground font-semibold "
           prefetch={false}
         >
           <CircuitBoardIcon className="h-5 w-5" />
           Task Board
-        </Link>
+        </Link> */}
         <Link
-          href="#"
+          href="/Underconstruction"
           className="flex items-center gap-2 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground font-semibold "
           prefetch={false}
         >

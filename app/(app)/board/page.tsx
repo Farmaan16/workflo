@@ -16,6 +16,7 @@ const TaskBoard = () => {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUnderConstruction, setIsUnderConstruction] = useState(false);
   const [selectedTask, setSelectedTask] = useState<
     | {
         _id: string;
@@ -59,8 +60,14 @@ const TaskBoard = () => {
   };
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar
   };
+
+   // Handle showing the "Under Construction" component
+  const showUnderConstruction = () => {
+    setIsUnderConstruction(true);
+  };
+
 
   return (
     <div className="flex min-h-screen w-full">
